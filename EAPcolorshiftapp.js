@@ -1,21 +1,8 @@
-//future version maybe counting game with number word in clouds area and actual random numbers
-//on lines that randomize and must be clicked in order to continue!
-
-//different modes: 1-10,  10-1,  odds,  evens
-
-//big success - above 'future version' has been realized as of 2/7. next things to think about:
-//more animations/more kid friendly?
-//reset without reloading browser is very important
-
 var nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 var words = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
-
 var floatingNum = document.getElementById("floating-num");
 var randomNum = randomNumFloat();
-
-floatingNum.innerHTML = randomNum;
-
-var numLines = 10;
+var numLines = 11;
 var colors = [];
 var pickedColor;
 var lines = document.querySelectorAll(".line");
@@ -25,6 +12,9 @@ reset();
 init();
 
 function init(){
+	floatingNum.innerHTML = randomNum;
+	// $("#pictureframe").css("margin-top", randomBirdHeight());
+	$("#pictureframe").css("margin-top", "-200px");
 	setLines();
 	randomNumFloat();
 }
@@ -32,40 +22,6 @@ function init(){
 function reload(){
 	location.reload();
 }
-
-function newNums(){
-	if(counter === 9){
-		floatingNum.innerHTML = "Well Done!";
-		setTimeout(reload, 1700);
-	}
-}
-
-function setLines(){
-	for(var i = 0; i < lines.length; i++){
-		//add mouseover listeners to lines
-		lines[i].addEventListener("mouseover", function(){
-		//grab color of mouseover line
-		dpickColor(i);
-	  });
-	}
-} 
-
-$( ".line" ).click(function() {
-	newNums();
-	if(counter !== 10){
-		if(this.innerHTML == randomNum){
-		$( this ).addClass("line-gone", 2000, "easeInBack");
-		  counter++;
-		  var x = nums.indexOf(randomNum);
-		  nums.splice(x, 1);
-		  randomNumFloat();
-		}
-	} else {
-		$(lines).removeClass("line-gone", 2000, "easeInBack");
-		reset();
-		init();
-	}
-})
 
 function reset(){
 	counter = 0;
@@ -76,18 +32,72 @@ function reset(){
 	for(var i = 0; i < lines.length; i++){
 		if(colors[i]){
 		lines[i].style.display = "block";
-		lines[i].style.background = colors[i];
+		//standard color mode
+		// lines[i].style.background = colors[i];
+		//gradient color mode
+		lines[i].style.background = "-webkit-gradient(linear, left top, left bottom, from(" + colors[i] + "), to(white))";
+		floatingNum.style.color = colors[i];
 		} else {
 		lines[i].style.display = "none";
 		}
 	}
 }
 
+function newNums(){
+	if(counter === 9){
+		$("#floating-num").animate({lineHeight: "1.6em"}, 2000);
+		floatingNum.innerHTML = "Well Done!";
+		setTimeout(reload, 2200);
+		$("#floating-num").animate({fontSize: "160vh"}, 1250);
+	}
+}
+
+function setLines(){
+	for(var i = 0; i < lines.length; i++){
+		//add mouseover listeners to lines
+		lines[i].addEventListener("click", function(){
+		//grab color of mouseover line
+		dpickColor(i);
+	  });
+	}
+} 
+
+$( ".line" ).click(function() {
+	newNums();
+	if(counter !== 10){
+		// fontSizeIncrease();
+		if(this.innerHTML == randomNum){
+		  $( this ).animate({fontSize: "0px"}, 100);
+		  $( this ).addClass("line-gone", 1800, "easeInBack"); 
+		  $( this ).removeClass("marker", 2000, "easeInBack"); 
+		  counter++;
+		  var x = nums.indexOf(randomNum);
+		  nums.splice(x, 1);
+		  $("#floating-num").animate({fontSize: "20vh"}, 400);
+		  randomNumFloat();
+		  fontSizeIncrease();
+		}
+		
+	} else {
+		$(lines).removeClass("line-gone", 2000, "easeInBack");
+		reset();
+		init();
+	}
+})
+
+
+
 function dpickColor() { 
 	colors = generateRandomColors(numLines);
 	for(var i = 0; i < lines.length; i++){
 		if(colors[i]){
-		lines[i].style.background = colors[i];
+		//standard color mode
+		// lines[i].style.background = colors[i];
+
+		//gradient color mode
+		lines[i].style.background = "-webkit-gradient(linear, left top, left bottom, from(" + colors[i] + "), to(white))";
+		
+		floatingNum.style.color = colors[i];
 		}
 	}
 }
@@ -110,18 +120,24 @@ function generateRandomColors(num){
 }
 
 function randomColor(){
-	//SET UP FOR PRIMARILY BLUE AND GREEN
+	//SET UP FOR PRIMARILY PINK AND SOME BLUE
 	//pick a red from 0-255
-	var r = Math.floor(Math.random() * 10);
+	var r = Math.floor(Math.random() * 255);
 	//pick a green from 0-255
-	var g = Math.floor(Math.random() * 215);
+	var g = 20;
 	//pick a blue from 0-255
-	var b = Math.floor(Math.random() * 255);
+	var b = 110;
 	return "rgb(" + r + "," + " " + g + "," + " " + b + ")";
+}
+
+function randomBirdHeight(){
+	var height = Math.floor(Math.random() * 7) *(-1);
+	return height + "em";
 }
 
 //Random floating number selected from available indexes and converted to a word
 function randomNumFloat(){
+	$("#floating-num").animate({fontSize: "15vh"}, 400);
 	var tempNums = nums;
 	while(counter !== 10) {
 	var i = Math.floor(Math.random()*tempNums.length);
@@ -178,3 +194,18 @@ function shuffle(array) {
   }
   return array;
 }
+
+//increase font size as lines decrease
+function fontSizeIncrease(){
+	if(counter == 4){
+		$(".marker").animate({fontSize: "12vh"}, 1350);
+	}
+	else if(counter == 6){
+		$(".marker").animate({fontSize: "16vh"}, 1400);
+	}
+	else if(counter == 9){
+		$(".marker").animate({fontSize: "24vh"}, 1450);
+	}
+}
+
+
