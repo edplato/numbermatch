@@ -24,7 +24,11 @@ body {
   bottom: 0;
   position: fixed;
   overflow: hidden;
-  display: flex;
+  display: -webkit-box;      
+  display: -moz-box;        
+  display: -ms-flexbox;     
+  display: -webkit-flex;    
+  display: flex;  
 }
 .line {
   cursor: pointer;
